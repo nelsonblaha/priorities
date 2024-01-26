@@ -1,0 +1,84 @@
+body {
+  header {
+    padding: 1em;
+  }
+
+  background-color: black!important;
+  color: white!important;
+  input {
+    background-color: black!important;
+    color: white!important;
+    // white text for input
+    ::-webkit-input-placeholder {
+      color: white!important;
+    }
+    &#task-input {
+      margin-left: 1em;
+      width: 50em;
+    }
+  }
+
+  section#task-list {
+    .task {
+      margin: 1em;
+      padding: 1em;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: height 0.3s ease;
+
+      a.description-text {
+        color: white;
+        text-decoration: none;
+        size: 14px;
+      }
+
+      input.edit-description {
+        margin-right: 5px;
+      }
+
+      :not(.description):not(.description-text) {
+        display: none;
+      }
+
+      &.focused {
+        height: 10em; /* Expanded height */
+
+        .hidden-expanded {
+          display: none;
+        }
+
+        :not(.hidden-expanded) {
+          display: flex;
+        }
+      }
+
+      .description {
+        display: flex;
+        .description-text {
+          width: 100%
+        }
+      }
+
+      .actions {
+        padding: 3px;
+        button {
+          margin-right: 5px;
+          flex-grow: 0;
+        }
+      }
+
+      .repeat {
+
+      }
+    }
+
+    .task-controls {
+      display: none; /* Initially hidden */
+    }
+
+    button {
+      margin-right: 5px;
+    }
+  }
+}

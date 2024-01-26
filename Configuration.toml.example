@@ -1,0 +1,10 @@
+# Configuration.toml
+[server]
+host = "0.0.0.0" # for docker
+
+[database]
+host = "localhost"
+port = 8123
+db_name = "priorities"
+username = "admin"
+password = "password"

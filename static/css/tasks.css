@@ -1,0 +1,67 @@
+body {
+  background-color: black!important;
+  color: white!important;
+}
+body header {
+  padding: 1em;
+}
+body input {
+  background-color: black!important;
+  color: white!important;
+}
+body input ::-webkit-input-placeholder {
+  color: white!important;
+}
+body input#task-input {
+  margin-left: 1em;
+  width: 50em;
+}
+body section#task-list .task {
+  margin: 1em;
+  padding: 1em;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: height 0.3s ease;
+}
+body section#task-list .task a.description-text {
+  color: white;
+  text-decoration: none;
+  size: 14px;
+}
+body section#task-list .task input.edit-description {
+  margin-right: 5px;
+}
+body section#task-list .task :not(.description):not(.description-text) {
+  display: none;
+}
+body section#task-list .task.focused {
+  height: 10em;
+  /* Expanded height */
+}
+body section#task-list .task.focused .hidden-expanded {
+  display: none;
+}
+body section#task-list .task.focused :not(.hidden-expanded) {
+  display: flex;
+}
+body section#task-list .task .description {
+  display: flex;
+}
+body section#task-list .task .description .description-text {
+  width: 100%;
+}
+body section#task-list .task .actions {
+  padding: 3px;
+}
+body section#task-list .task .actions button {
+  margin-right: 5px;
+  flex-grow: 0;
+}
+body section#task-list .task-controls {
+  display: none;
+  /* Initially hidden */
+}
+body section#task-list button {
+  margin-right: 5px;
+}
