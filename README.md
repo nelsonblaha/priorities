@@ -1,5 +1,3 @@
-Another TODO app, but this one is mine.
-
 ### Features
 
 - Tasks repeat following a designated interval after last completion
@@ -19,7 +17,6 @@ Another TODO app, but this one is mine.
 
 ### TODO
 
-- CouchDB design docs to source control
 - Cypress tests
 - Deployment
   - Docker Compose for CouchDB
