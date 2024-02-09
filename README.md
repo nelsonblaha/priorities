@@ -23,5 +23,6 @@ Another TODO app, but this one is mine.
 - Cypress tests
 - Deployment
   - Docker Compose for CouchDB
+  - automatic design documents
   - Update check
 - Use Home Assistant tasks? Deployment within Home Assistant
