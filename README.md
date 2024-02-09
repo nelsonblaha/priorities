@@ -25,4 +25,5 @@ Another TODO app, but this one is mine.
   - Docker Compose for CouchDB
   - Automatic design documents
   - Update check
+- Development instructions
 - Use Home Assistant tasks? Deployment within Home Assistant
