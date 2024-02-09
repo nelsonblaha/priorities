@@ -14,6 +14,8 @@ Another TODO app, but this one is mine.
 - (TODO) Prioritization
     - Tasks belong to projects
     - Projects are prioritized, affecting priority of tasks
+- (TODO) Households
+    - Tasks may be shared among household members
 
 ### TODO
 
