@@ -1,6 +1,6 @@
 Another TODO app, but this one is mine.
 
-### Distinguishing features
+### Features
 
 - Tasks repeat following a designated interval after last completion
     - E.g. "Change HVAC filter" repeats 3 months after last completion
