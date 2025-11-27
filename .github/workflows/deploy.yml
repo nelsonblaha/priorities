@@ -55,7 +55,7 @@ jobs:
           cat > /tmp/priorities-test-config/Configuration.toml << 'EOF'
           [server]
           host = "0.0.0.0"
-          allowed_origin = "http://localhost:8082"
+          allowed_origin = "http://localhost:8083"
 
           [database]
           host = "couchdb-test"
@@ -70,14 +70,14 @@ jobs:
           docker rm -f priorities-test 2>/dev/null || true
           docker run -d --name priorities-test \
             --network priorities-test-net \
-            -p 8082:8080 \
+            -p 8083:8080 \
             -v /tmp/priorities-test-config/Configuration.toml:/root/Configuration.toml:ro \
             priorities-test:latest
 
       - name: Wait for app
         run: |
           for i in {1..30}; do
-            if curl -s http://localhost:8082/ > /dev/null; then
+            if curl -s http://localhost:8083/ > /dev/null; then
               echo "App is ready"
               break
             fi
@@ -96,7 +96,7 @@ jobs:
 
       - name: Run Cypress tests
         working-directory: tests
-        run: npx cypress run --config baseUrl=http://localhost:8082
+        run: npx cypress run --config baseUrl=http://localhost:8083
 
       - name: Cleanup test environment
         if: always()
