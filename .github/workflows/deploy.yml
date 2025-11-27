@@ -122,6 +122,7 @@ jobs:
           docker rm priorities || true
           docker run -d \
             --name priorities \
+            --network priorities-net \
             -p 8081:8080 \
             --restart unless-stopped \
             -v /home/ben/priorities-config/Configuration.toml:/root/Configuration.toml:ro \
