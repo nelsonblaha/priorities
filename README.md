@@ -24,4 +24,3 @@
   - Update check
 - Development instructions
 - Use Home Assistant tasks? Deployment within Home Assistant
-
