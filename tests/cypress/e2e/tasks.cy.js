@@ -1,6 +1,6 @@
 describe('template spec', () => {
   beforeEach(() => {
-    cy.visit('http://localhost:8080')
+    cy.visit('/')
   })
 
   it('shows the tasks list', () => {
