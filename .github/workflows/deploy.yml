@@ -33,7 +33,7 @@ jobs:
           docker rm priorities || true
           docker run -d \
             --name priorities \
-            --network host \
+            -p 8081:8080 \
             --restart unless-stopped \
             -v /home/ben/priorities-config/Configuration.toml:/root/Configuration.toml:ro \
             priorities:latest
