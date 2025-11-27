@@ -1,0 +1,41 @@
+{
+  "basicTask": {
+    "description": "Basic test task"
+  },
+  "repeatingTaskWeekly": {
+    "description": "Weekly recurring task",
+    "repeat_mode": "after-completion",
+    "repeat_number": 1,
+    "repeat_unit": "weeks"
+  },
+  "repeatingTaskDaily": {
+    "description": "Daily recurring task",
+    "repeat_mode": "after-completion",
+    "repeat_number": 1,
+    "repeat_unit": "days"
+  },
+  "repeatingTaskMonthly": {
+    "description": "Monthly recurring task",
+    "repeat_mode": "after-completion",
+    "repeat_number": 1,
+    "repeat_unit": "months"
+  },
+  "specialCharsTask": {
+    "description": "Task with <special> & \"chars\" 'quotes'"
+  },
+  "emojiTask": {
+    "description": "Task with emoji 🎉✅🔥"
+  },
+  "longDescriptionTask": {
+    "description": "This is a very long task description that contains a lot of text to test how the UI handles long strings. It should still be readable and not break the layout in any way. The quick brown fox jumps over the lazy dog."
+  },
+  "searchableTask1": {
+    "description": "Searchable alpha task"
+  },
+  "searchableTask2": {
+    "description": "Searchable beta task"
+  },
+  "searchableTask3": {
+    "description": "Searchable gamma task"
+  }
+}

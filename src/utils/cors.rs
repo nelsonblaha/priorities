@@ -5,8 +5,14 @@ use actix_web::http;
 pub fn cors_setup() -> Cors {
     Cors::default()
         .allowed_origin_fn(|origin, _req_head| {
+            let origin_str = origin.to_str().unwrap_or("");
+            // Allow localhost for testing
+            if origin_str.starts_with("http://localhost") {
+                return true;
+            }
+            // Allow configured origin
             if let Ok(allowed_origin) = std::env::var("ALLOWED_ORIGIN") {
-                origin.as_bytes().starts_with(allowed_origin.as_bytes())
+                origin_str.starts_with(&allowed_origin)
             } else {
                 false
             }

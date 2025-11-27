@@ -18,5 +18,6 @@ pub struct Task {
     pub repeat_number: Option<i32>,
     pub repeat_unit: Option<String>,
     pub completions: Vec<Completion>,
-    pub completed: Option<bool>
+    pub completed: Option<bool>,
+    pub visible_at: Option<i64>,  // Timestamp in milliseconds when task becomes visible again
 }
