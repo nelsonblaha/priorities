@@ -4,10 +4,6 @@ on:
   push:
     branches: [main]
 
-env:
-  REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}
-
 jobs:
   test:
     runs-on: self-hosted
@@ -24,36 +20,20 @@ jobs:
   build-and-deploy:
     needs: test
     runs-on: self-hosted
-    permissions:
-      contents: read
-      packages: write
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Log in to Container Registry
-        uses: docker/login-action@v3
-        with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Build and push Docker image
-        uses: docker/build-push-action@v5
-        with:
-          context: .
-          push: true
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+      - name: Build Docker image
+        run: docker build -t priorities:latest .
 
       - name: Deploy container
         run: |
-          docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
           docker stop priorities || true
           docker rm priorities || true
           docker run -d \
             --name priorities \
-            --network host \
+            -p 8081:8080 \
             --restart unless-stopped \
             -v /home/ben/priorities-config/Configuration.toml:/root/Configuration.toml:ro \
-            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+            priorities:latest
