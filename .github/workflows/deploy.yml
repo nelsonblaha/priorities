@@ -17,19 +17,24 @@ jobs:
       - name: Run Rust tests
         run: cargo test
 
+      - name: Create test network
+        run: |
+          docker network rm priorities-test-net 2>/dev/null || true
+          docker network create priorities-test-net
+
       - name: Start test CouchDB
         run: |
           docker rm -f couchdb-test 2>/dev/null || true
           docker run -d --name couchdb-test \
+            --network priorities-test-net \
             -e COUCHDB_USER=admin \
             -e COUCHDB_PASSWORD=testpass \
-            -p 5985:5984 \
             couchdb:latest
 
       - name: Wait for CouchDB
         run: |
           for i in {1..30}; do
-            if curl -s http://localhost:5985/ > /dev/null; then
+            if docker exec couchdb-test curl -s http://localhost:5984/ > /dev/null 2>&1; then
               echo "CouchDB is ready"
               break
             fi
@@ -39,33 +44,40 @@ jobs:
 
       - name: Create test database
         run: |
-          curl -X PUT http://admin:testpass@localhost:5985/priorities
+          docker exec couchdb-test curl -X PUT http://admin:testpass@localhost:5984/priorities
+
+      - name: Build test Docker image
+        run: docker build -t priorities-test:latest .
 
       - name: Create test config
         run: |
-          cat > Configuration.toml << 'EOF'
+          mkdir -p /tmp/priorities-test-config
+          cat > /tmp/priorities-test-config/Configuration.toml << 'EOF'
           [server]
           host = "0.0.0.0"
-          allowed_origin = "http://localhost:8080"
+          allowed_origin = "http://localhost:8082"
 
           [database]
-          host = "localhost"
-          port = 5985
+          host = "couchdb-test"
+          port = 5984
           db_name = "priorities"
           username = "admin"
           password = "testpass"
           EOF
 
-      - name: Build and start app
+      - name: Start test app container
         run: |
-          cargo build --release
-          ./target/release/priorities &
-          echo $! > /tmp/priorities-test.pid
+          docker rm -f priorities-test 2>/dev/null || true
+          docker run -d --name priorities-test \
+            --network priorities-test-net \
+            -p 8082:8080 \
+            -v /tmp/priorities-test-config/Configuration.toml:/root/Configuration.toml:ro \
+            priorities-test:latest
 
       - name: Wait for app
         run: |
           for i in {1..30}; do
-            if curl -s http://localhost:8080/ > /dev/null; then
+            if curl -s http://localhost:8082/ > /dev/null; then
               echo "App is ready"
               break
             fi
@@ -84,14 +96,15 @@ jobs:
 
       - name: Run Cypress tests
         working-directory: tests
-        run: npx cypress run
+        run: npx cypress run --config baseUrl=http://localhost:8082
 
-      - name: Cleanup
+      - name: Cleanup test environment
         if: always()
         run: |
-          kill $(cat /tmp/priorities-test.pid 2>/dev/null) 2>/dev/null || true
+          docker rm -f priorities-test 2>/dev/null || true
           docker rm -f couchdb-test 2>/dev/null || true
-          rm -f Configuration.toml /tmp/priorities-test.pid
+          docker network rm priorities-test-net 2>/dev/null || true
+          rm -rf /tmp/priorities-test-config
 
   build-and-deploy:
     needs: test
