@@ -3,6 +3,8 @@ name: Test, Build and Deploy
 on:
   push:
     branches: [main]
+  repository_dispatch:
+    types: [nelnet-ci-updated]
 
 jobs:
   test:
