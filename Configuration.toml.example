@@ -1,10 +1,11 @@
 # Configuration.toml
 [server]
 host = "0.0.0.0" # for docker
+allowed_origin = "http://localhost:8080"
 
 [database]
 host = "localhost"
-port = 8123
+port = 5984
 db_name = "priorities"
 username = "admin"
-password = "password"
+password = "your-secure-password-here"

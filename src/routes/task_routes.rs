@@ -1,6 +1,7 @@
 // routes/task_routes.rs
 use actix_web::{web, HttpResponse, Responder, Error};
 use crate::models::task::{Task, Completion};
+use crate::DatabaseConfig;
 use reqwest::Client;
 use std::collections::HashMap;
 use serde_json::json;
@@ -19,9 +20,12 @@ fn calculate_repeat_milliseconds(repeat_number: i32, repeat_unit: &str) -> i64 {
     duration.num_milliseconds()
 }
 
-pub async fn create_update_task(task: web::Json<Task>) -> Result<HttpResponse, Error> {
+pub async fn create_update_task(
+    db_config: web::Data<DatabaseConfig>,
+    task: web::Json<Task>,
+) -> Result<HttpResponse, Error> {
     let client = Client::new();
-    let couch_url = "http://admin:zWRQXR7oOWgsYaO3@couchdb-prod:5984/priorities";
+    let couch_url = db_config.get_url();
 
     println!("-----Creating/Updating task: {:?}", task);
 
@@ -152,9 +156,12 @@ pub async fn create_update_task(task: web::Json<Task>) -> Result<HttpResponse, E
     }
 }
 
-pub async fn get_tasks(query: web::Query<HashMap<String, String>>) -> impl Responder {
+pub async fn get_tasks(
+    db_config: web::Data<DatabaseConfig>,
+    query: web::Query<HashMap<String, String>>,
+) -> impl Responder {
     let client = Client::new();
-    let couch_url = "http://admin:zWRQXR7oOWgsYaO3@couchdb-prod:5984/priorities";
+    let couch_url = db_config.get_url();
     let find_url = format!("{}/_find", couch_url);
     let now = Utc::now().timestamp() * 1000; // Current time in milliseconds
     println!("-----Fetching tasks: {:?}", now);
