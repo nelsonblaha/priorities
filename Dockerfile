@@ -4,6 +4,8 @@ FROM rust:latest as builder
 WORKDIR /usr/src/priorities
 # Copy your source and manifest files to the image
 COPY . .
+# Use example config if no Configuration.toml exists (for CI)
+RUN if [ ! -f Configuration.toml ]; then cp Configuration.toml.example Configuration.toml; fi
 # Build your application
 RUN cargo build --release
 
