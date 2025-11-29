@@ -27,7 +27,7 @@ jobs:
       - name: Create test network
         run: |
           docker network rm priorities-test-net 2>/dev/null || true
-          docker network create priorities-test-net
+          docker network create priorities-test-net 2>/dev/null || true
 
       - name: Start test CouchDB
         run: |
