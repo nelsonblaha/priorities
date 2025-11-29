@@ -56,10 +56,16 @@ jobs:
       - name: Build test Docker image
         run: docker build -t priorities-test:latest .
 
-      - name: Create test config
+      - name: Start test app container
         run: |
-          mkdir -p /tmp/priorities-test-config
-          cat > /tmp/priorities-test-config/Configuration.toml << 'EOF'
+          docker rm -f priorities-test 2>/dev/null || true
+          # Start container without config first
+          docker run -d --name priorities-test \
+            --network priorities-test-net \
+            -p 8083:8080 \
+            priorities-test:latest
+          # Inject test config via docker cp (avoids DinD path issues)
+          cat > /tmp/test-config.toml << 'EOF'
           [server]
           host = "0.0.0.0"
           allowed_origin = "http://localhost:8083"
@@ -71,15 +77,9 @@ jobs:
           username = "admin"
           password = "testpass"
           EOF
-
-      - name: Start test app container
-        run: |
-          docker rm -f priorities-test 2>/dev/null || true
-          docker run -d --name priorities-test \
-            --network priorities-test-net \
-            -p 8083:8080 \
-            -v /tmp/priorities-test-config/Configuration.toml:/root/Configuration.toml:ro \
-            priorities-test:latest
+          docker cp /tmp/test-config.toml priorities-test:/root/Configuration.toml
+          # Restart to pick up new config
+          docker restart priorities-test
 
       - name: Wait for app
         run: |
@@ -111,7 +111,7 @@ jobs:
           docker rm -f priorities-test 2>/dev/null || true
           docker rm -f couchdb-test 2>/dev/null || true
           docker network rm priorities-test-net 2>/dev/null || true
-          rm -rf /tmp/priorities-test-config
+          rm -f /tmp/test-config.toml
 
   build-and-deploy:
     needs: test
