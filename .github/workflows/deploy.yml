@@ -66,17 +66,17 @@ jobs:
             priorities-test:latest
           # Inject test config via docker cp (avoids DinD path issues)
           cat > /tmp/test-config.toml << 'EOF'
-          [server]
-          host = "0.0.0.0"
-          allowed_origin = "http://host.docker.internal:8083"
+[server]
+host = "0.0.0.0"
+allowed_origin = "http://host.docker.internal:8083"
 
-          [database]
-          host = "couchdb-test"
-          port = 5984
-          db_name = "priorities"
-          username = "admin"
-          password = "testpass"
-          EOF
+[database]
+host = "couchdb-test"
+port = 5984
+db_name = "priorities"
+username = "admin"
+password = "testpass"
+EOF
           docker cp /tmp/test-config.toml priorities-test:/root/Configuration.toml
           # Restart to pick up new config
           docker restart priorities-test
