@@ -13,7 +13,7 @@
     - Tasks belong to projects
     - Projects are prioritized, affecting priority of tasks
 - (TODO) Households
-    - Tasks may be shared among household members
+    - Tasks may be shared among household memberss
 
 ### TODO
 
