@@ -65,18 +65,8 @@ jobs:
             -p 8083:8080 \
             priorities-test:latest
           # Inject test config via docker cp (avoids DinD path issues)
-          cat > /tmp/test-config.toml << 'EOF'
-[server]
-host = "0.0.0.0"
-allowed_origin = "http://host.docker.internal:8083"
-
-[database]
-host = "couchdb-test"
-port = 5984
-db_name = "priorities"
-username = "admin"
-password = "testpass"
-EOF
+          # Config is base64 encoded to avoid YAML/heredoc issues
+          echo "W3NlcnZlcl0KaG9zdCA9ICIwLjAuMC4wIgphbGxvd2VkX29yaWdpbiA9ICJodHRwOi8vaG9zdC5kb2NrZXIuaW50ZXJuYWw6ODA4MyIKCltkYXRhYmFzZV0KaG9zdCA9ICJjb3VjaGRiLXRlc3QiCnBvcnQgPSA1OTg0CmRiX25hbWUgPSAicHJpb3JpdGllcyIKdXNlcm5hbWUgPSAiYWRtaW4iCnBhc3N3b3JkID0gInRlc3RwYXNzIgo=" | base64 -d > /tmp/test-config.toml
           docker cp /tmp/test-config.toml priorities-test:/root/Configuration.toml
           # Restart to pick up new config
           docker restart priorities-test
