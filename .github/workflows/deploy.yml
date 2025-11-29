@@ -59,23 +59,24 @@ jobs:
       - name: Start test app container
         run: |
           docker rm -f priorities-test 2>/dev/null || true
-          # Start container without config first
+          # Start container on both test network (for CouchDB) and blaha-ci-shared (for runner access)
           docker run -d --name priorities-test \
             --network priorities-test-net \
-            -p 8083:8080 \
             priorities-test:latest
+          # Connect to blaha-ci-shared so runner can access it directly
+          docker network connect blaha-ci-shared priorities-test
           # Inject test config via docker cp (avoids DinD path issues)
-          # Config is base64 encoded to avoid YAML/heredoc issues
-          echo "W3NlcnZlcl0KaG9zdCA9ICIwLjAuMC4wIgphbGxvd2VkX29yaWdpbiA9ICJodHRwOi8vaG9zdC5kb2NrZXIuaW50ZXJuYWw6ODA4MyIKCltkYXRhYmFzZV0KaG9zdCA9ICJjb3VjaGRiLXRlc3QiCnBvcnQgPSA1OTg0CmRiX25hbWUgPSAicHJpb3JpdGllcyIKdXNlcm5hbWUgPSAiYWRtaW4iCnBhc3N3b3JkID0gInRlc3RwYXNzIgo=" | base64 -d > /tmp/test-config.toml
+          # Config: allowed_origin=http://priorities-test:8080 for container-to-container access
+          echo "W3NlcnZlcl0KaG9zdCA9ICIwLjAuMC4wIgphbGxvd2VkX29yaWdpbiA9ICJodHRwOi8vcHJpb3JpdGllcy10ZXN0OjgwODAiCgpbZGF0YWJhc2VdCmhvc3QgPSAiY291Y2hkYi10ZXN0Igpwb3J0ID0gNTk4NApkYl9uYW1lID0gInByaW9yaXRpZXMiCnVzZXJuYW1lID0gImFkbWluIgpwYXNzd29yZCA9ICJ0ZXN0cGFzcyIK" | base64 -d > /tmp/test-config.toml
           docker cp /tmp/test-config.toml priorities-test:/root/Configuration.toml
           # Restart to pick up new config
           docker restart priorities-test
 
       - name: Wait for app
         run: |
-          # In DinD, port is exposed on host, access via host.docker.internal
+          # Access via container name on shared network (blaha-ci-shared)
           for i in {1..30}; do
-            if curl -s http://host.docker.internal:8083/ > /dev/null; then
+            if curl -s http://priorities-test:8080/ > /dev/null; then
               echo "App is ready"
               break
             fi
@@ -94,7 +95,7 @@ jobs:
 
       - name: Run Cypress tests
         working-directory: tests
-        run: npx cypress run --config baseUrl=http://host.docker.internal:8083
+        run: npx cypress run --config baseUrl=http://priorities-test:8080
 
       - name: Cleanup test environment
         if: always()
